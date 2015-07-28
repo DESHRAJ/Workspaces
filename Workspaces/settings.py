@@ -36,7 +36,10 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', 
+    'organizations',
+    'digits',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -100,3 +103,54 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+SESSION_ENGINE = 'redis_sessions_fork.session'
+
+# all these options are defaults, you can skip anyone
+SESSION_REDIS_HOST = 'localhost'
+SESSION_REDIS_PORT = 6379
+SESSION_REDIS_DB = 0
+SESSION_REDIS_PASSWORD = None
+SESSION_REDIS_PREFIX = None
+
+# if you prefer domain socket connection
+# you can just add this line instead of SESSION_REDIS_HOST and SESSION_REDIS_PORT
+# SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = '/var/run/redis/redis.sock'
+
+# you can also use redis from url
+# SESSION_REDIS_URL = 'redis:6379/0'
+
+# also available setup connection via redis.ConnectionPool like
+# SESSION_REDIS_CONNECTION_POOL = 'random.app.redis_connection_pool'
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
+ORGS_TIMESTAMPED_MODEL = 'django_extensions.db.models.TimeStampedModel'
+
+ORGS_INVITATION_BACKEND = 'myapp.backends.MyInvitationBackend'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # Already defined Django-related contexts here
+
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
+            ],
+        },
+    },
+]
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
