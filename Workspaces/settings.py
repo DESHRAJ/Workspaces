@@ -27,48 +27,57 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_ID = 1
 
 # Application definition
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles', 
-    'organizations',
-    'digits',
-
+	'django.contrib.sites',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles', 
+	'organizations',
+	'digits',
+	'allauth',
+	'allauth.account',
+	'allauth.socialaccount',
+	'allauth.socialaccount.providers.dropbox',
+	'allauth.socialaccount.providers.google',
+	'redis_sessions_fork',
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django.middleware.security.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'Workspaces.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+				'allauth.account.context_processors.account',
+				'allauth.socialaccount.context_processors.socialaccount',
+			],
+		},
+	},
 ]
 
 WSGI_APPLICATION = 'Workspaces.wsgi.application'
@@ -78,10 +87,10 @@ WSGI_APPLICATION = 'Workspaces.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+	}
 }
 
 
@@ -101,7 +110,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
+STATIC_ROOT = BASE_DIR
 STATIC_URL = '/static/'
 
 SESSION_ENGINE = 'redis_sessions_fork.session'
@@ -113,16 +122,6 @@ SESSION_REDIS_DB = 0
 SESSION_REDIS_PASSWORD = None
 SESSION_REDIS_PREFIX = None
 
-# if you prefer domain socket connection
-# you can just add this line instead of SESSION_REDIS_HOST and SESSION_REDIS_PORT
-# SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = '/var/run/redis/redis.sock'
-
-# you can also use redis from url
-# SESSION_REDIS_URL = 'redis:6379/0'
-
-# also available setup connection via redis.ConnectionPool like
-# SESSION_REDIS_CONNECTION_POOL = 'random.app.redis_connection_pool'
-
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
@@ -130,27 +129,22 @@ ORGS_TIMESTAMPED_MODEL = 'django_extensions.db.models.TimeStampedModel'
 
 ORGS_INVITATION_BACKEND = 'myapp.backends.MyInvitationBackend'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                # Already defined Django-related contexts here
-
-                # `allauth` needs this from django
-                'django.template.context_processors.request',
-            ],
-        },
-    },
-]
-
 AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+	# Needed to login by username in Django admin, regardless of `allauth`
+	'django.contrib.auth.backends.ModelBackend',
+	# `allauth` specific authentication methods, such as login by e-mail
+	'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGIN_REDIRECT_URL = "/"
+
+LOGIN_URL = "/login"
+
+LOGOUT_URL = "/logout"
+
+ACCOUNT_EMAIL_REQUIRED = True
+
+# for authentication using both Username or Email
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
