@@ -29,6 +29,14 @@ ALLOWED_HOSTS = []
 
 SITE_ID = 1
 
+SESSION_ENGINE = 'redis_sessions_fork.session'
+
+# all these options are defaults, you can skip anyone
+SESSION_REDIS_HOST = 'localhost'
+SESSION_REDIS_PORT = 6379
+SESSION_REDIS_DB = 0
+SESSION_REDIS_PASSWORD = None
+SESSION_REDIS_PREFIX = None
 # Application definition
 
 INSTALLED_APPS = (
@@ -113,21 +121,12 @@ USE_TZ = True
 STATIC_ROOT = BASE_DIR
 STATIC_URL = '/static/'
 
-SESSION_ENGINE = 'redis_sessions_fork.session'
-
-# all these options are defaults, you can skip anyone
-SESSION_REDIS_HOST = 'localhost'
-SESSION_REDIS_PORT = 6379
-SESSION_REDIS_DB = 0
-SESSION_REDIS_PASSWORD = None
-SESSION_REDIS_PREFIX = None
-
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
-ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
-ORGS_TIMESTAMPED_MODEL = 'django_extensions.db.models.TimeStampedModel'
+# ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
+# ORGS_TIMESTAMPED_MODEL = 'django_extensions.db.models.TimeStampedModel'
 
-ORGS_INVITATION_BACKEND = 'myapp.backends.MyInvitationBackend'
+# ORGS_INVITATION_BACKEND = 'myapp.backends.MyInvitationBackend'
 
 AUTHENTICATION_BACKENDS = (
 	# Needed to login by username in Django admin, regardless of `allauth`
