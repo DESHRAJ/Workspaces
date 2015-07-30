@@ -26,7 +26,7 @@
 from django.contrib.sites.models import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.utils.translation import ugettext as _
 from django.views.generic import (ListView, DetailView, UpdateView, CreateView,
         DeleteView, FormView)
@@ -55,6 +55,7 @@ class BaseOrganizationDetail(OrganizationMixin, DetailView):
         context = super(BaseOrganizationDetail, self).get_context_data(**kwargs)
         context['organization_users'] = self.organization.organization_users.all()
         context['organization'] = self.organization
+        self.request.session["workspaceid"] = self.organization.id
         return context
 
 
@@ -201,7 +202,6 @@ class OrganizationCreate(BaseOrganizationCreate):
 
 class OrganizationDetail(MembershipRequiredMixin, BaseOrganizationDetail):
     pass
-
 
 class OrganizationUpdate(AdminRequiredMixin, BaseOrganizationUpdate):
     pass

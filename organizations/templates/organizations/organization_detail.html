@@ -9,5 +9,6 @@
     <li><a href="{% url "organization_user_add" organization.pk %}">Add a member</a></li>
 </ul>
 {% organization_users organization %}
+<center><h3><a href="http://localhost:5000?workspace={{ organization.pk }}">Get Involved into {{ organization }}</a></h3></center>
 {% endblock %}
 
