@@ -137,11 +137,11 @@ AUTHENTICATION_BACKENDS = (
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/dashboard"
 
-LOGIN_URL = "/login"
+LOGIN_URL = "/accounts/login"
 
-LOGOUT_URL = "/logout"
+LOGOUT_URL = "/accounts/logout"
 
 ACCOUNT_EMAIL_REQUIRED = True
 
