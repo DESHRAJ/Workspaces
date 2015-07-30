@@ -4,6 +4,7 @@ from organizations.backends import invitation_backend, registration_backend
 from digits import views
 urlpatterns = [
     # Examples:
+    url(r'^email/', 'digits.views.current_user', name='current_user'),
     url(r'dashboard', 'digits.views.dashboard', name='dashboard'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^accounts/', include('allauth.urls')),
