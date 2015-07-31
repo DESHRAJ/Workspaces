@@ -49,6 +49,7 @@ INSTALLED_APPS = (
 	'django.contrib.staticfiles', 
 	'organizations',
 	'digits',
+	'digitsdb',
 	'allauth',
 	'allauth.account',
 	'allauth.socialaccount',
