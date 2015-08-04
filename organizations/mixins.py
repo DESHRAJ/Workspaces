@@ -107,7 +107,7 @@ class AdminRequiredMixin(object):
         self.organization = self.get_organization()
         if not self.organization.is_admin(request.user) and not \
                 request.user.is_superuser:
-            return HttpResponseForbidden(_("Sorry, admins only"))
+            return HttpResponseForbidden(_("<h2>Sorry, Admin only have access</h2> "))
         return super(AdminRequiredMixin, self).dispatch(request, *args,
                 **kwargs)
 
@@ -122,6 +122,6 @@ class OwnerRequiredMixin(object):
         self.organization = self.get_organization()
         if self.organization.owner.organization_user.user != request.user \
                 and not request.user.is_superuser:
-            return HttpResponseForbidden(_("You are not the organization owner"))
+            return HttpResponseForbidden(_("<h2>You are not the Workspace owner</h2>"))
         return super(OwnerRequiredMixin, self).dispatch(request, *args,
                 **kwargs)

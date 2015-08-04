@@ -56,7 +56,7 @@ class OrganizationForm(forms.ModelForm):
         owner = self.cleaned_data['owner']
         if owner != self.instance.owner.organization_user:
             if self.request.user != self.instance.owner.organization_user.user:
-                raise forms.ValidationError(_("Only the organization owner can change ownerhip"))
+                raise forms.ValidationError(_("Only the Workspace owner can change ownerhip"))
         return owner
 
 
@@ -70,7 +70,7 @@ class OrganizationUserForm(forms.ModelForm):
     def clean_is_admin(self):
         is_admin = self.cleaned_data['is_admin']
         if self.instance.organization.owner.organization_user == self.instance and not is_admin:
-            raise forms.ValidationError(_("The organization owner must be an admin"))
+            raise forms.ValidationError(_("The Workspace owner must be an admin"))
         return is_admin
 
 
@@ -111,7 +111,7 @@ class OrganizationUserAddForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data['email']
         if self.organization.users.filter(email=email):
-            raise forms.ValidationError(_("There is already an organization "
+            raise forms.ValidationError(_("There is already a workspace "
                                           "member with this email address!"))
         return email
 
@@ -155,7 +155,7 @@ class SignUpForm(forms.Form):
     Form class for signing up a new user and new account.
     """
     name = forms.CharField(max_length=50,
-            help_text=_("The name of the organization"))
+            help_text=_("The name of the workspace"))
     slug = forms.SlugField(max_length=50,
             help_text=_("The name in all lowercase, suitable for URL identification"))
     email = forms.EmailField()

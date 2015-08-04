@@ -159,7 +159,7 @@ class OrganizationBase(six.with_metaclass(OrgMeta, UnicodeMixin, models.Model)):
     """
 
     name = models.CharField(max_length=200,
-            help_text=_("The name of the organization"))
+            help_text=_("The name of the Workspace"))
     is_active = models.BooleanField(default=True)
 
     objects = OrgManager()
