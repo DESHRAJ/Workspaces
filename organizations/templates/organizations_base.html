@@ -1,101 +1,95 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-  <title>{% block head_title %}{% endblock %}</title>
-   {% block extra_head %}
-    {% endblock %}
-  <script type="text/javascript"></script>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-  <link rel="stylesheet" href="/static/materialize/css/materialize.min.css">
-  <script src="/static/materialize/js/jquery-2.1.1.min.js"></script>
-  <script src="/static/materialize/js/materialize.min.js"></script>          
+  <title>Dashboard</title>
+  <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
+  <!--Let browser know website is optimized for mobile-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <style type="text/css">
-  body{
-    background: url('/static/material/texture.jpg') repeat;
-  }
-  #title{
-    color:rgb(2, 136, 209);
-  }
-  #black{
-    color:#0d47a1;
-  }
-  #dbwidth{
-    color:#0d47a1;
-    width:100%;
-    text-align: left; 
-    margin: 1px;
-  }
-  #dbwidthtitle{
-    width:100%;
-    text-align: left;
-    /*margin: 1px;*/
-      
-  }
-  .row{
-    margin-top: 2%;
-  }
-  .heading{
+  html * {
+    /*color: black !important;*/
     font-weight: 300;
-    color:#0d47a1;
   }
-  #brandlogo{
-    font-weight: 300;
+  .side-nav{
+    margin-top: 72px !important;
   }
   .nav-wrapper{
-    background-color: #860917 !important;
+    /*background-color: #00bcd4 !important;*/
   }
-  .errorlist{
-  list-style-type: none;
-  color: #b11616;
-  font-size: 12px;
-  margin: 5px 0 0 0;
-}
+  .responsive-img{
+    vertical-align: middle !important;
+  }
+  i{
+    vertical-align: middle;
+  }
+  @media screen and (min-width: 800px) {
+    .dashboardControls{
+        margin-left: 238px;
+        margin-bottom: 0;
+    }
+    .card{
+      height: 40%;
+    }
+    .row{
+      display: flex;
+    }
+  }
+  ul.side-nav.fixed a{
+    padding: 0 15px;
+  }
+  nav ul a{
+    display: inline-block;
+  }
 </style>
 <body>
-<header>
-  
-  <nav>
-    <div class="nav-wrapper blue darken-3">
-      <a href="#!" class="brand-logo" id="brandlogo">CloudCV</a>
-      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="/">Home</a></li>
-        <li><a href="/image-stitch">Image Stitch</a></li>
-        <li><a href="http://objdetect.cloudcv.org">Object Detection</a></li>
-        <li><a href="/decaf-server">Decaf-Server</a></li>
-        <li><a href="/classify">Classification</a></li>
-        <li><a href="/vip">VIP</a></li>
-        <li><a href="/trainaclass">Train a new category</a></li>
-        {% if user.is_authenticated %}
-        <li><a href="/">Hi, {{ user.username }}!</a></li>
-        <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-        {% else %}
-        <li><a href="{% url 'account_login' %}">Sign In</a></li>
-        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-        {% endif %}
-      </ul>
-      <ul class="side-nav" id="mobile-demo">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Decaf</a></li>
-        <li><a href="#">Classify</a></li>
-        <li><a href="#">Image Stitching</a></li>
-        {% if user.is_authenticated %}
-          <li><a href="/">Hi, {{ user.username }}!</a></li>
-          <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-        {% else %}
-          <li><a href="{% url 'account_login' %}">Sign In</a></li>
-          <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-        {% endif %}
-      </ul>
-    </div>
-  </nav>
+  <header>
+  <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper white z-index-2 ">
+        <a href="#!" class="brand-logo black-text">CloudCV Dashboard</a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">view_list</i></a>
+        <ul class="right hide-on-med-and-down black-text">
+          <li><a href="#" class="black-text"><i class="material-icons">polymer</i></a></li>
+          <li><a href="#" class="black-text">History</a></li>
+          <li><a href="#" class="black-text">My Requested Jobs</a></li>
+          {% if request.user.is_authenticated %}
+          <li><img class="responsive-img circle" src="http://www.deshraj.in/static/img/responsive_web_design.png" style="height:50px; width:50px;"><a href="#" class="black-text">Hi, {{ request.user.first_name }}</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <ul class="side-nav fixed" id="nav-mobile">
+    <li><a href="#"><i class="material-icons">view_list</i>  Classification</a></li>
+    <div class="divider"></div>
+    <li><a href="#"><i class="material-icons">dialpad</i> Train a Model</a></li>
+    <div class="divider"></div>
+    <li><a href="#"><i class="material-icons">textsms</i> Decaf Server</a></li>
+    <div class="divider"></div>
+    <li><a class="modal-trigger" href="#s3modal"><i class="material-icons">vpn_key</i> Add S3 Bucket</a></li>
+    <div class="divider"></div>
+    <li><a href="/api/upload"><i class="material-icons">grade</i> Upload API</a></li>
+    <div class="divider"></div>
+    <li><a href="/api/download"><i class="material-icons">replay</i>Download API</a></li>
+    <div class="divider"></div>
+    <li><a href="#"><i class="material-icons">search</i> Feature 3</a></li>
+    <div class="divider"></div>
+
+    <li><a href="#"></a></li>
+  </ul>
+  </header>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
 </header>
+    <main>  
+      {% block content %}
+      {% endblock %}
+    </main>
 <script src="/static/materialize/js/init.js"></script>
  {% block body %}
-    <center>{% block content %}
-    {% endblock %}</center>
     {% endblock %}
     {% block extra_body %}
     {% endblock %}
