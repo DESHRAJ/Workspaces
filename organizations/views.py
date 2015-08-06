@@ -39,19 +39,20 @@ from .mixins import (OrganizationMixin, OrganizationUserMixin,
 from .models import Organization
 from .utils import create_organization
 
-from Crypto.Cipher import AES
+# from Crypto.Cipher import AES
+# import base64
+
+# MASTER_KEY="Some-long-base-key-to-use-as-encyrption-key"
+
+# def encrypt_val(clear_text):
+#     enc_secret = AES.new(MASTER_KEY[:32])
+#     tag_string = (str(clear_text) +
+#                   (AES.block_size -
+#                    len(str(clear_text)) % AES.block_size) * "\0")
+#     cipher_text = base64.b64encode(enc_secret.encrypt(tag_string))
+
+#     return cipher_text
 import base64
-
-MASTER_KEY="Some-long-base-key-to-use-as-encyrption-key"
-
-def encrypt_val(clear_text):
-    enc_secret = AES.new(MASTER_KEY[:32])
-    tag_string = (str(clear_text) +
-                  (AES.block_size -
-                   len(str(clear_text)) % AES.block_size) * "\0")
-    cipher_text = base64.b64encode(enc_secret.encrypt(tag_string))
-
-    return cipher_text
 
 class BaseOrganizationList(ListView):
     # TODO change this to query on the specified model
@@ -68,7 +69,7 @@ class BaseOrganizationDetail(OrganizationMixin, DetailView):
         context = super(BaseOrganizationDetail, self).get_context_data(**kwargs)
         context['organization_users'] = self.organization.organization_users.all()
         context['organization'] = self.organization
-        context['organization_pk_encrypted'] = encrypt_val(str(self.organization.pk))
+        context['organization_pk_encrypted'] = base64.b64encode(str(self.organization.pk))
         return context
 
 
@@ -84,7 +85,6 @@ class BaseOrganizationCreate(CreateView):
         kwargs = super(BaseOrganizationCreate, self).get_form_kwargs()
         kwargs.update({'request': self.request})
         return kwargs
-
 
 class BaseOrganizationUpdate(OrganizationMixin, UpdateView):
     form_class = OrganizationForm

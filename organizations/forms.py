@@ -45,7 +45,7 @@ class OrganizationForm(forms.ModelForm):
 
     class Meta:
         model = Organization
-        exclude = ('users', 'is_active')
+        exclude = ('users', 'is_active', 'slug',)
 
     def save(self, commit=True):
         if self.instance.owner.organization_user != self.cleaned_data['owner']:
@@ -121,8 +121,8 @@ class OrganizationAddForm(forms.ModelForm):
     Form class for creating a new organization, complete with new owner, including a
     User instance, OrganizationUser instance, and OrganizationOwner instance.
     """
-    email = forms.EmailField(max_length=75,
-            help_text=_("The email address for the account owner"))
+    # email = forms.EmailField(max_length=75,
+            # help_text=_("The email address for the account owner"))
 
     def __init__(self, request, *args, **kwargs):
         self.request = request
@@ -130,7 +130,7 @@ class OrganizationAddForm(forms.ModelForm):
 
     class Meta:
         model = Organization
-        exclude = ('users', 'is_active')
+        exclude = ('users', 'is_active', 'slug')
 
     def save(self, **kwargs):
         """
@@ -138,7 +138,7 @@ class OrganizationAddForm(forms.ModelForm):
         """
         is_active = True
         try:
-            user = get_user_model().objects.get(email=self.cleaned_data['email'])
+            user = get_user_model().objects.get(email=self.request.user.email)
         except get_user_model().DoesNotExist:
             user = invitation_backend().invite_by_email(
                     self.cleaned_data['email'],
@@ -147,7 +147,7 @@ class OrganizationAddForm(forms.ModelForm):
                         'sender': self.request.user, 'created': True})
             is_active = False
         return create_organization(user, self.cleaned_data['name'],
-                self.cleaned_data['slug'], is_active=is_active)
+                self.cleaned_data['name'].lower(), is_active=is_active)
 
 
 class SignUpForm(forms.Form):
@@ -156,6 +156,6 @@ class SignUpForm(forms.Form):
     """
     name = forms.CharField(max_length=50,
             help_text=_("The name of the workspace"))
-    slug = forms.SlugField(max_length=50,
-            help_text=_("The name in all lowercase, suitable for URL identification"))
+    # slug = forms.SlugField(max_length=50,
+            # help_text=_("The name in all lowercase, suitable for URL identification"))
     email = forms.EmailField()
