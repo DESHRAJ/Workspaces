@@ -13,3 +13,5 @@ def current_user(request):
 def dashboard(request):
 	request.session['hello'] = "world"
 	return HttpResponse("Logged In")
+
+
