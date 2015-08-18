@@ -36,8 +36,8 @@ class UserRegistrationForm(forms.ModelForm):
     The class operates on a user model which is assumed to have the required
     fields of a BaseUserModel
     """
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
+    # first_name = forms.CharField(max_length=30)
+    # last_name = forms.CharField(max_length=30)
     password = forms.CharField(max_length=30, widget=forms.PasswordInput)
     password_confirm = forms.CharField(max_length=30,
             widget=forms.PasswordInput)
@@ -45,11 +45,14 @@ class UserRegistrationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserRegistrationForm, self).__init__(*args, **kwargs)
         self.initial['username'] = ''
+        for fieldname in ['username']:
+            self.fields[fieldname].help_text = None
 
     class Meta:
         model = get_user_model()
+        fields = ('email', 'username', 'password', 'password_confirm',)
         exclude = ('is_staff', 'is_superuser', 'is_active', 'last_login',
-                'date_joined', 'groups', 'user_permissions')
+                'date_joined', 'groups', 'user_permissions',  'first_name', 'last_name')
 
 
 class OrganizationRegistrationForm(forms.ModelForm):
