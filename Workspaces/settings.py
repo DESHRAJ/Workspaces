@@ -37,6 +37,7 @@ SESSION_REDIS_PORT = 6379
 SESSION_REDIS_DB = 0
 SESSION_REDIS_PASSWORD = None
 SESSION_REDIS_PREFIX = None
+SESSION_COOKIE_NAME = 'sessionid'
 # Application definition
 
 INSTALLED_APPS = (
@@ -119,9 +120,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-STATIC_ROOT = BASE_DIR
 STATIC_URL = '/static/'
-
+# STATIC_ROOT = "static"
+STATICFILES_DIRS = (
+                os.path.join(BASE_DIR, 'static'),
+)
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
@@ -136,9 +139,9 @@ AUTHENTICATION_BACKENDS = (
 	'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOGIN_REDIRECT_URL = "/dashboard"
+LOGIN_REDIRECT_URL = "/workspace"
 
 LOGIN_URL = "/accounts/login"
 
@@ -148,3 +151,12 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # for authentication using both Username or Email
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'desh.py@gmail.com'
+EMAIL_HOST_PASSWORD = 'password'
