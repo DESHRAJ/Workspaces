@@ -170,16 +170,14 @@ def get_user_from_session(session_key):
 class DownloadAPI(APIView):
 	def post(self,request):
 		result = {}
-		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-		print request.session._session_key
 		path = request.POST['source_path']
 		dest_path = request.POST['dest_path']
 		session_id = request.POST['session_id']
-		print "POST Request to Download API "
-		print "WE HAVE THE VALUES WITH US"
-		print session_id
-		print path
-		print dest_path
+		# print "POST Request to Download API "
+		# print "WE HAVE THE VALUES WITH US"
+		# print session_id
+		# print path
+		# print dest_path
 		user_id = get_user_from_session(session_id).id
 
 		try:
@@ -205,15 +203,16 @@ class DownloadAPI(APIView):
 				result = {"error":"Check if you have attached the type of cloud storage with your account or enter valid path"}
 		except:
 			result = {"error":"Incorrect Input Provided"}
-		print result
-		return HttpResponse(json.dumps(result), content_type="application/json")
+		return HttpResponse(json.dumps(result))
 
 
 def get_data_from_s3(request,source_path, dest_path, bucket, user_id):
 	result = {}
 	try:
-		s3 = StorageCredentials.objects.get(user__id = user_id)
-		conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
+		# s3 = StorageCredentials.objects.get(user__id = user_id)
+		# conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
+		conn = S3Connection('AKIAJISUCCBNYECJPTIA','1tLIgzgYIpGXlP3WGDeAXW2t4b+GU1QT7k/STi/J')
+		# print "bucket is ", bucket
 		b = conn.get_bucket(bucket)
 		result['user_id'] = user_id
 		result['bucket'] = bucket
@@ -224,15 +223,17 @@ def get_data_from_s3(request,source_path, dest_path, bucket, user_id):
 		return result
 	bucket_entries = b.list(source_path[1:])
 	if dest_path[-1]!="/":
-		dast_path+="/"
+		dest_path+="/"
+	if not os.path.isdir(dest_path):
+		os.makedirs(dest_path)
 	for i in bucket_entries:
+		print i.key
 		result['location'].append(i.key)
 		file_name = str(i.key).split("/")[-1]
 		result['dest_path'].append(dest_path+file_name)
 		i.get_contents_to_filename(dest_path+file_name)
+	print result	
 	return result
-
-
 
 def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id):
 	result = {}
