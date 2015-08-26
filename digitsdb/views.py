@@ -58,16 +58,18 @@ class UploadAPI(APIView):
 	def post(self,request):
 		source_path = request.POST['source_path']
 		path = request.POST['dest_path']
-		user_id = request.POST['user_id']
-
+		session_id = request.POST['session_id']
+		user_id = get_user_from_session(session_id).id
 		# Example 1: s3://bucket:/path/to/files
 		# Example 2: dropbox:/path/to/files
 		# Example 3: google:/path/to/file
 		try:
 			if path.split(":")[0].lower()=="s3":
-				print "S3 is working "
+				print "[CALLING METHOD] Uploading data to S3"
 				bucket = path.split(":")[1][2:]
 				dest_path = str(path.split(":")[2])
+				print "bucket: ", bucket
+				print "dest_path", dest_path
 				result = put_data_on_s3(request, source_path, dest_path, bucket, user_id)
 
 			elif path.split(":")[0].lower()=="dropbox":
@@ -103,7 +105,8 @@ class UploadAPI(APIView):
 				result = {"error":"Check if you have attached the type of cloud storage with your account or enter valid path"}
 		except:
 			result = {"error":"Incorrect Input"}
-		return HttpResponse(json.dumps(result), content_type="application/json")
+		print result
+		return HttpResponse(json.dumps(result))
 
 	@csrf_exempt
 	def dispatch(self, *args, **kwargs):
@@ -113,13 +116,13 @@ def put_data_on_s3(request, source_path, dest_path, bucket, user_id):
 	result = {}
 	files = [name for name in glob.glob(os.path.join(source_path,'*.*')) if os.path.isfile(os.path.join(source_path,name))]
 	result['sourcePath'] = source_path
-	result['dest_path'] = request.POST['dest_path']
+	result['dest_path'] = dest_path
 	result['bucket'] = bucket
 	result['uplaodedTo']= []
 	result['user_id'] = user_id
-	s3_user = StorageCredentials.objects.get(user__id = user_id)
-	conn = S3Connection(s3_user.aws_access_key,s3_user.aws_access_secret)
-	# conn = S3Connection('ZZZZZZZZZAKIAJISUCCBNYECJPTIAZZZZZZZZZ','ZZZZZZZ1tLIgzgYIpGXlP3WGDeAXW2t4b+GU1QT7k/STi/JZZZZZZZZ')
+	# s3_user = StorageCredentials.objects.get(user__id = user_id)
+	# conn = S3Connection(s3_user.aws_access_key,s3_user.aws_access_secret)
+	# conn = S3Connection('ZZZZZZZZAKIAJISUCCBNYECJPTIAZZZZZ','ZZZZZZ1tLIgzgYIpGXlP3WGDeAXW2t4b+GU1QT7k/STi/JZZZZZZZ')
 	try:
 		# Use the bucket is already exists
 		b = conn.get_bucket(bucket)
@@ -167,19 +170,25 @@ def get_user_from_session(session_key):
 	return AnonymousUser()
 
 
-class DownloadAPI(APIView):
+class DownloadAPI(View):
 	def post(self,request):
 		result = {}
 		path = request.POST['source_path']
-		dest_path = request.POST['dest_path']
 		session_id = request.POST['session_id']
-		# print "POST Request to Download API "
-		# print "WE HAVE THE VALUES WITH US"
-		# print session_id
-		# print path
-		# print dest_path
 		user_id = get_user_from_session(session_id).id
-
+		dest_path = request.POST['dest_path']
+		dest_path = dest_path.split('/')
+		dest_path.append(str(user_id))
+		dest_path[-1],dest_path[-2] = dest_path[-2],dest_path[-1]
+		dest_path = '/'.join(dest_path)
+		try:
+			# Increment the name of new directory by one
+			directories = map(int, os.listdir(dest_path))
+			dest_path+='/'+str(max(directories)+1)
+		except:
+			# If no directory exists then give it name 1
+			dest_path+='/'+'1'
+		print dest_path
 		try:
 			if path.split(":")[0].lower()=="s3":
 				print "S3 is working "
@@ -195,7 +204,6 @@ class DownloadAPI(APIView):
 				client = DropboxClient(session)
 				token = client.create_oauth2_access_token()
 				result = get_data_from_dropbox(request, source_path, dest_path, token, user_id)
-
 			elif path.split(":")[0].lower() =="Google Drive":
 				get_data_from_google(request,path,access_token)
 
@@ -204,6 +212,9 @@ class DownloadAPI(APIView):
 		except:
 			result = {"error":"Incorrect Input Provided"}
 		# return result
+		print "########################################"
+		print result
+		print "########################################"
 		return HttpResponse(json.dumps(result))
 
 
@@ -212,13 +223,13 @@ def get_data_from_s3(request,source_path, dest_path, bucket, user_id):
 	try:
 		# s3 = StorageCredentials.objects.get(user__id = user_id)
 		# conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
-		conn = S3Connection('AKIAJISUCCBNYECJPTIA','1tLIgzgYIpGXlP3WGDeAXW2t4b+GU1QT7k/STi/J')
+		# conn = S3Connection('ZZZZZZZZAKIAJISUCCBNYECJPTIAZZZZZ','ZZZZZZ1tLIgzgYIpGXlP3WGDeAXW2t4b+GU1QT7k/STi/JZZZZZZZ')
 		# print "bucket is ", bucket
 		b = conn.get_bucket(bucket)
 		result['user_id'] = user_id
 		result['bucket'] = bucket
 		result['location']= []
-		result['dest_path'] = []
+		result['dest_path'] = dest_path
 	except:
 		result['error'] = "Check if the S3 bucket exists or not."
 		return result
@@ -228,12 +239,9 @@ def get_data_from_s3(request,source_path, dest_path, bucket, user_id):
 	if not os.path.isdir(dest_path):
 		os.makedirs(dest_path)
 	for i in bucket_entries:
-		# print i.key
 		result['location'].append(i.key)
 		file_name = str(i.key).split("/")[-1]
-		result['dest_path'].append(dest_path + file_name)
 		i.get_contents_to_filename(dest_path + file_name)
-	print result
 	return result
 
 def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id):
@@ -244,13 +252,12 @@ def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id)
 		result['user'] = request.user.email
 		result['storage'] = request.POST['storageName']
 		result['location']= []
-		result['dest_path'] = []
+		result['dest_path'] = dest_path
 		for i in images_metadata['contents']:
 			if i['is_dir'] == False:
 				result['location'].append(i['path'])
 				f, metadata = client.get_file_and_metadata(i['path'])
 				out = open(dest_path + str(i.name), 'wb')
-				result['dest_path'].append(dest_path + str(i.name))
 				out.write(f.read())
 				out.close()
 	except:
