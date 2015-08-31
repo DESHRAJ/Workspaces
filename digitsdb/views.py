@@ -213,15 +213,15 @@ class DownloadAPI(View):
 			dest_path.append(str(user_id))
 			dest_path[-1],dest_path[-2] = dest_path[-2],dest_path[-1]
 			dest_path = '/'.join(dest_path)
+			print "1  ", dest_path
 			try:
 				# Increment the name of new directory by one
 				directories = map(int, os.listdir(dest_path))
-				dest_path+='/'+str(max(directories)+1)
+				dest_path+=str(max(directories)+1)
 			except:
 				# If no directory exists then give it name 1
 				dest_path+='/'+'1'
-			if dest_path[-1]!="/":
-				dest_path+="/"
+			print "2  ", dest_path
 			if not os.path.isdir(dest_path):
 				os.makedirs(dest_path)
 			if path.split(":")[0].lower()=="s3":
@@ -243,6 +243,7 @@ class DownloadAPI(View):
 				client = DropboxClient(session)
 				token = client.create_oauth2_access_token()
 				print token
+				print "BEFORE CALLING", dest_path
 				result = get_data_from_dropbox(request, source_path, dest_path, token, user_id)
 				print "[DROPBOX]", result
 			elif path.split(":")[0].lower() =="Google Drive":
@@ -299,6 +300,7 @@ def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id)
 		if dest_path[-1]!="/":
 			dest_path+="/"
 		result['dest_path'] = dest_path
+		print "AFTER CALLING", dest_path
 		# print "echo"
 		# source_size = get_dropbox_directory_size(source_path,client)
 		# global thread
