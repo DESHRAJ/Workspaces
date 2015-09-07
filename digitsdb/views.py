@@ -86,7 +86,7 @@ class UploadAPI(APIView):
 
 			elif path.split(":")[0].lower()=="dropbox":
 				print "[UPLOAD API FOR DROPBOX]"
-				dest_path = path.split(":")[1]
+				dest_path = path.split(":")[1][1:]
 				access_token = SocialToken.objects.get(account__user__id = user_id, app__name = "Dropbox")
 				session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
 				access_key, access_secret = access_token.token, access_token.token_secret  # Previously obtained OAuth 1 credentials
@@ -96,6 +96,7 @@ class UploadAPI(APIView):
 				result = post_data_on_dropbox(request, source_path, dest_path, token, user_id)
 
 			elif path.split(":")[0].lower()=="gdrive":
+				'''*** NOT WORKING ***'''
 				print "[UPLOAD API FOR GOOGLE DRIVE]"
 				storage = Storage(SocialToken, 'id', user_id, 'token')
 				credential = storage.get()
