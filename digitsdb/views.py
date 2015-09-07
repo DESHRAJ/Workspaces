@@ -14,37 +14,15 @@ def dashboard(request):
 	request.session['hello'] = "world"
 	return HttpResponse("Logged In")
 
-# import os
-# import time
-# import subprocess
-# from threading import Thread
-# from flask import Flask, render_template, session, request
-# from flask.ext.socketio import SocketIO, emit, join_room, leave_room, \
-# 	close_room, disconnect
 
-# thread = None
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
-# import commands
-
-# def get_download_status(source_size, dest_path):
-# 	"""
-# 		Method for calculating the percentage of completion
-# 		and then sending a respinse to page using socketIO.
-# 		This process is repeating untill the copy is not 
-# 		done completely. 
-# 	"""
-# 	# dest_size = int(commands.getoutput('du -s '+dest_path).split()[0])
-# 	source_size = int(source_size)
-# 	dest_size = 1
-# 	while(dest_size <= source_size):
-# 		dest_size = int(commands.getoutput('du -s '+dest_path).split()[0])
-# 		time.sleep(0.01)
-# 		percent = (dest_size*100/source_size)
-# 		# dest_size = get_size(dest_path)
-# 		# dest_size+=1
-# 		socketio.emit("my progressbar",
-# 			{'percent':percent},namespace='/')
-
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, load_backend
+from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt  
 from django.views.generic import *
 from django.contrib.auth.models import User
@@ -59,23 +37,19 @@ from apiclient import errors
 from apiclient.http import MediaFileUpload
 from Workspaces.settings import *
 from os import path
+
 import httplib2
 import json
 import traceback
 import glob
 import os
 import dropbox
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import authentication, permissions
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
-from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, load_backend
+import shutil
 
 def get_user_from_session(session_key):
+	'''
+	Method for getting user_id using the session_id
+	'''
 	session_engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
 	session_wrapper = session_engine.SessionStore(session_key)
 	session = session_wrapper.load()
@@ -89,36 +63,29 @@ def get_user_from_session(session_key):
 	return AnonymousUser()
 
 
-
 class UploadAPI(APIView):
-	# def get(self, request, *args, **kwargs):
-	# 	providers = []
-	# 	tokens = SocialToken.objects.filter(account__user__id = request.user.id)
-	# 	for i in tokens:
-	# 		providers.append(str(i.app))
-	# 	s3 = StorageCredentials.objects.filter(user__id = request.user.id).count()
-	# 	if s3:
-	# 		providers.append("Amazon S3")
-	# 	return render_to_response("app/upload_to_storage.html",{'p':providers},context_instance = RequestContext(request))
+	'''
+		Uplaod API for uploading featured and classification models to 
+		AWS S3 and Dropbox. 
+		Convention for uploading files: 
+			Example 1: s3://bucket:/path/to/files
+			Example 2: dropbox://path/to/files
+			Example 3: gdrive://path/to/file 
+	'''
 	def post(self,request):
 		source_path = request.POST['source_path']
 		path = request.POST['dest_path']
 		session_id = request.POST['session_id']
 		user_id = get_user_from_session(session_id).id
-		# Example 1: s3://bucket:/path/to/files
-		# Example 2: dropbox:/path/to/files
-		# Example 3: google:/path/to/file
 		try:
 			if path.split(":")[0].lower()=="s3":
-				# print "[CALLING METHOD] Uploading data to S3"
+				print "[UPLOAD API FOR S3]"
 				bucket = path.split(":")[1][2:]
 				dest_path = str(path.split(":")[2])
-				# print "bucket: ", bucket
-				# print "dest_path", dest_path
-				result = put_data_on_s3(request, source_path, dest_path, bucket, user_id)
+				result = post_data_on_s3(request, source_path, dest_path, bucket, user_id)
 
 			elif path.split(":")[0].lower()=="dropbox":
-				# print "[DATA TO DROPBOX]"
+				print "[UPLOAD API FOR DROPBOX]"
 				dest_path = path.split(":")[1]
 				access_token = SocialToken.objects.get(account__user__id = user_id, app__name = "Dropbox")
 				session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
@@ -126,12 +93,11 @@ class UploadAPI(APIView):
 				session.set_token(access_key, access_secret)
 				client = DropboxClient(session)
 				token = client.create_oauth2_access_token()
-				result = put_data_on_dropbox(request, source_path, dest_path, token, user_id)
+				result = post_data_on_dropbox(request, source_path, dest_path, token, user_id)
 
-			elif path.split(":")[0].lower()=="Google Drive":
-				# print "############## GOOGLE DRIVE ##############   "
+			elif path.split(":")[0].lower()=="gdrive":
+				print "[UPLOAD API FOR GOOGLE DRIVE]"
 				storage = Storage(SocialToken, 'id', user_id, 'token')
-				# print storage
 				credential = storage.get()
 				# credentials = SocialToken.objects.get(account__user__id = request.user.id, app__name = storage)
 				# credentials = credentials.token
@@ -140,8 +106,8 @@ class UploadAPI(APIView):
 				results = service.files().list(maxResults=10).execute()
 				items = results.get('items', [])
 				if not items:
-					pass
 					# print 'No files found.'
+					pass
 				else:
 					# print 'Files:'
 					for item in items:
@@ -152,14 +118,16 @@ class UploadAPI(APIView):
 				result = {"error":"Check if you have attached the type of cloud storage with your account or enter valid path"}
 		except:
 			result = {"error":"Incorrect Input"}
-		# print result
 		return HttpResponse(json.dumps(result))
 
 	@csrf_exempt
 	def dispatch(self, *args, **kwargs):
 		return super(UploadAPI, self).dispatch(*args, **kwargs)
 
-def put_data_on_s3(request, source_path, dest_path, bucket, user_id):
+def post_data_on_s3(request, source_path, dest_path, bucket, user_id):
+	'''
+		Method for Uploading data to S3 bucket using S3 boto module
+	'''
 	result = {}
 	files = [name for name in glob.glob(os.path.join(source_path,'*.*')) if os.path.isfile(os.path.join(source_path,name))]
 	result['sourcePath'] = source_path
@@ -169,14 +137,11 @@ def put_data_on_s3(request, source_path, dest_path, bucket, user_id):
 	result['user_id'] = user_id
 	s3_user = StorageCredentials.objects.get(user__id = user_id)
 	conn = S3Connection(s3_user.aws_access_key,s3_user.aws_access_secret)
-	# conn = S3Connection('AKIAJISUCCBNYECJPTIA','1tLIgzgYIpGXlP3WGDeAXW2t4b+GU1QT7k/STi/J')
 	try:
-		# Use the bucket is already exists
+		# Use the bucket if it already exists
 		b = conn.get_bucket(bucket)
-		# print "TRY "
 	except:
 		# If the bucket does not exist, then create a new bucket
-		# print "CATCH"
 		b = conn.create_bucket(bucket)
 	for i in files:
 		# Loop to upload the files on S3 One by one
@@ -184,24 +149,29 @@ def put_data_on_s3(request, source_path, dest_path, bucket, user_id):
 		k.key = dest_path+i.split("/")[-1]
 		result['uplaodedTo'].append(k.key)
 		k.set_contents_from_filename(i)
-		# print i
 	return result
 
 
-def put_data_on_dropbox(request, source_path, dest_path,access_token, user_id):
+def post_data_on_dropbox(request, source_path, dest_path,access_token, user_id):
+	'''
+		Method for uploading data on Dropbox using Dropbox API
+	'''
 	result = {}
 	client = dropbox.client.DropboxClient(access_token)
 	result['dest_path'] = dest_path
 	result['user_id'] = user_id
-	# result['uplaodedTo'] = []
 	files = [name for name in glob.glob(os.path.join(source_path,'*.*')) if os.path.isfile(os.path.join(source_path,name))]
 	for i in files:
 		f = open(i,'rb')
 		response = client.put_file(dest_path+i.split("/")[-1], f)
-		# result['uplaodedTo'].append(response)
 	return result
 
-class DownloadAPI(View):
+
+class DownloadAPI(APIView):
+	'''
+		Download API for downloading Training Images, Validation Images 
+		and Caffe models from S3 and Dropbox.  
+	'''
 	def post(self,request):
 		try:
 			result = {}
@@ -213,7 +183,7 @@ class DownloadAPI(View):
 			dest_path.append(str(user_id))
 			dest_path[-1],dest_path[-2] = dest_path[-2],dest_path[-1]
 			dest_path = '/'.join(dest_path)
-			print "1  ", dest_path
+			print "dest_path at starting is ", dest_path
 			try:
 				# Increment the name of new directory by one
 				directories = map(int, os.listdir(dest_path))
@@ -221,68 +191,67 @@ class DownloadAPI(View):
 			except:
 				# If no directory exists then give it name 1
 				dest_path+='/'+'1'
-			print "2  ", dest_path
+
+			if dest_path[-1] != "/":
+				# Append forward slash to given url if not exists
+				dest_path+="/"
 			if not os.path.isdir(dest_path):
 				os.makedirs(dest_path)
+
 			if path.split(":")[0].lower()=="s3":
-				print "S3 is working "
+				print "[DOWNLOAD API FOR S3]"
 				bucket = path.split(":")[1][2:]
 				source_path = str(path.split(":")[2])
 				result = get_data_from_s3(request, source_path, dest_path, bucket, user_id)
 
 			elif path.split(":")[0].lower()=="dropbox":
-				print "[HERE]"
+				print "[DOWNLOAD API FOR DROPBOX]"
 				source_path = path.split(':')[1][1:]
 				access_token = SocialToken.objects.get(account__user__id = user_id, app__name = "Dropbox")
 				session = DropboxSession(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
 				access_key, access_secret = access_token.token, access_token.token_secret  # Previously obtained OAuth 1 credentials
 				session.set_token(access_key, access_secret)
-				print source_path
-				print dest_path
-				print user_id
 				client = DropboxClient(session)
 				token = client.create_oauth2_access_token()
-				print token
-				print "BEFORE CALLING", dest_path
 				result = get_data_from_dropbox(request, source_path, dest_path, token, user_id)
-				print "[DROPBOX]", result
-			elif path.split(":")[0].lower() =="Google Drive":
+			elif path.split(":")[0].lower() =="gdrive":
+				# NON FUNCTIONAL
 				get_data_from_google(request,path,access_token)
 			else:
+				shutil.rmtree(dest_path[:-1])
 				result = {"error":"Check if you have attached the type of cloud storage with your account or enter valid path"}
 		except:
+			shutil.rmtree(dest_path[:-1])
 			result = {"error":"Invalid Input Provided"}
-		# return result
-		# print "########################################"
-		# print result
-		# print "########################################"
 		return HttpResponse(json.dumps(result))
 
 
 def get_data_from_s3(request,source_path, dest_path, bucket, user_id):
+	'''
+		Method for downloading data from S3 bucket using S3boto
+	'''
 	result = {}
 	try:
-		# s3 = StorageCredentials.objects.get(user__id = user_id)
-		# conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
-		# conn = S3Connection('ZZZZZZZZAKIAJISUCCBNYECJPTIAZZZZZ','ZZZZZZ1tLIgzgYIpGXlP3WGDeAXW2t4b+GU1QT7k/STi/JZZZZZZZ')
-		# print "bucket is ", bucket
+		s3 = StorageCredentials.objects.get(user__id = user_id)
+		conn = S3Connection(s3.aws_access_key,s3.aws_access_secret)
 		b = conn.get_bucket(bucket)
 		result['user_id'] = user_id
 		result['bucket'] = bucket
-		result['location']= []
 		result['dest_path'] = dest_path
 	except:
 		result['error'] = "Check if the S3 bucket exists or not."
 		return result
 	bucket_entries = b.list(source_path[1:])
 	for i in bucket_entries:
-		result['location'].append(i.key)
 		file_name = str(i.key).split("/")[-1]
 		i.get_contents_to_filename(dest_path + file_name)
 	return result
 
 
 def get_dropbox_directory_size(path,client):
+	'''
+		Method to download size of a Directory inside Dropbox
+	'''
 	return sum(
 		f['bytes'] if not f['is_dir'] else size(f['path'])
 		for f in client.metadata(path)['contents']
@@ -290,35 +259,35 @@ def get_dropbox_directory_size(path,client):
 
 
 def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id):
+	'''
+		Method for downloading data from Dropbox using Dropbox API
+	'''
 	result = {}
 	try:
 		client = dropbox.client.DropboxClient(str(access_token))
 		images_metadata = client.metadata(source_path)
 		result['user_id'] = user_id
-		result['storage'] = source_path
-		# result['location']= []
-		if dest_path[-1]!="/":
-			dest_path+="/"
+		result['source_path'] = source_path
 		result['dest_path'] = dest_path
-		print "AFTER CALLING", dest_path
-		# print "echo"
-		# source_size = get_dropbox_directory_size(source_path,client)
-		# global thread
-		# if thread is None:
-		# 	thread = Thread(target=get_download_status, args=(source_size, dest_path))
-		# 	thread.start()
-		# print len(images_metadata['contents'])
-		for i in images_metadata['contents']:
-			if not i['is_dir']:
-				f, metadata = client.get_file_and_metadata(i['path'])
-				out = open(dest_path + str(i['path'].split("/")[-1]), 'wb')
-				out.write(f.read())
-				out.close()
+		if source_path[-9:] == '.prototxt' or source_path[-11:] == '.caffemodel':
+			f, metadata = client.get_file_and_metadata(images_metadata['path'])
+			out = open(dest_path + str(images_metadata['path'].split("/")[-1]), 'wb')
+			out.write(f.read())
+			out.close()
+			result['dest_path'] = dest_path + str(images_metadata['path'].split("/")[-1])
+		else:
+			for i in images_metadata['contents']:
+				if not i['is_dir']:
+					f, metadata = client.get_file_and_metadata(i['path'])
+					out = open(dest_path + str(i['path'].split("/")[-1]), 'wb')
+					out.write(f.read())
+					out.close()
 	except:
-		result['error'] = "Check if the directory exists or not and then try again."
+		shutil.rmtree(dest_path[:-1])
+		result['error'] = "Check if the Directory/Files exist or not and then try again."
 	return result
 
-"BELOW METHOD NOT WORKING FOR NOW"
+# BELOW METHOD NOT WORKING FOR NOW
 def createDriveService():
 	"""
 		Builds and returns a Drive service object authorized with the
@@ -333,7 +302,7 @@ def createDriveService():
 	http = credentials.authorize(http)
 	return build('drive', 'v2', http=http, developerKey=API_KEY)
 
-"BELOW METHOD NOT WORKING FOR NOW"
+# BELOW METHOD NOT WORKING FOR NOW
 def insert_file(service, title, parent_id, filename):
   """Insert new file.
   Args:
@@ -370,4 +339,3 @@ def insert_file(service, title, parent_id, filename):
 
 up_storage_api = csrf_exempt(UploadAPI.as_view())
 down_storage_api = csrf_exempt(DownloadAPI.as_view())
-
