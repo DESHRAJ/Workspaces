@@ -3,3 +3,6 @@ django==1.8
 django-redis-sessions-fork==0.6.2
 django-extensions
 django-allauth==0.22.0
+dropbox
+boto
+google-api-python-client
