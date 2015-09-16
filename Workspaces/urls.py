@@ -3,7 +3,7 @@ from django.contrib import admin
 from organizations.backends import invitation_backend, registration_backend
 from digitsdb import views
 from digits import views
-import os 
+import os
 urlpatterns = [
 	# Examples:
 	url(r'^static/(.*)$', 'django.views.static.serve', {'document_root': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static')}),
@@ -17,7 +17,7 @@ urlpatterns = [
 	url(r'^', include('organizations.urls')),
 	url(r'api/upload', 'digitsdb.views.up_storage_api', name='api_upload'),
 	url(r'api/download', 'digitsdb.views.down_storage_api', name='api_download'),
-
+	url(r'test', 'digitsdb.views.test_new', name='test_new'),
 ]
 
 # urlpatterns += patterns('',
