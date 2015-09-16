@@ -11,13 +11,10 @@
 <style type="text/css">
   html * {
     /*color: black !important;*/
-    font-weight: 300;
+    /*font-weight: 300;*/
   }
   .side-nav{
-    margin-top: 72px !important;
-  }
-  .nav-wrapper{
-    /*background-color: #00bcd4 !important;*/
+    margin-top: 64px;
   }
   .responsive-img{
     vertical-align: middle !important;
@@ -37,48 +34,108 @@
       display: flex;
     }
   }
-  ul.side-nav.fixed a{
+  /*ul.side-nav.fixed a{
     padding: 0 15px;
-  }
+  }*/
   nav ul a{
     display: inline-block;
   }
+  ul.side-nav.leftside-navigation .profile-btn {
+    margin: 0;
+    text-transform: capitalize;
+    padding: 0;
+    text-shadow: 1px 1px 1px #444;
+    font-size: 15px;
+}
+#profile-dropdown{
+    width: 128px;
+    position: absolute;
+    top: 57px;
+    left: 101.234px;
+    opacity: 1;
+    /*display: block;*/
+}
+ul.side-nav.leftside-navigation li a {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.side-nav a {
+    line-height: 42px;
+    height: 42px;
+}
+ul.side-nav li {
+    padding: 0;
+}
+
+ul.side-nav.leftside-navigation li.user-details {
+  background: url(http://demo.geekslabs.com/materialize/v2.1/layout01/images/user-bg.jpg) no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  /*overflow: hidden;*/
+  margin-bottom: 15px;
+  padding: 15px 0px 0px 15px;
+}
 </style>
 <body>
   <header>
   <div class="navbar-fixed">
     <nav>
-      <div class="nav-wrapper white z-index-2 ">
-        <a href="#!" class="brand-logo black-text">CloudCV Dashboard</a>
-        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">view_list</i></a>
-        <ul class="right hide-on-med-and-down black-text">
-          <li><a href="#" class="black-text"><i class="material-icons">polymer</i></a></li>
-          <li><a href="#" class="black-text">History</a></li>
-          <li><a href="#" class="black-text">My Requested Jobs</a></li>
-          {% if request.user.is_authenticated %}
-          <li><img class="responsive-img circle" src="http://www.deshraj.in/static/img/responsive_web_design.png" style="height:50px; width:50px;"><a href="#" class="black-text">Hi, {{ request.user.first_name }}</a></li>
-          {% endif %}
+      <div class="nav-wrapper z-index-2  light-blue accent-2 white-text">
+        <a href="#!" class="waves-effect waves-block waves-light brand-logo white-text">My Workspace</a>
+        <a href="#" data-activates="mobile-demo" class="waves-effect waves-block waves-light button-collapse"><i class="material-icons">view_list</i></a>
+        <ul class="right hide-on-med-and-down white-text">
+          <li><a href="#" class="white-text waves-effect waves-block waves-light">HOME</a></li>
+          <li><a href="#" class="white-text waves-effect waves-block waves-light">JOBS HISTORY</a></li>
+          <li><a href="#" class="white-text waves-effect waves-block waves-light">GOTO DIGITS</a></li>
         </ul>
       </div>
     </nav>
   </div>
-  <ul class="side-nav fixed" id="nav-mobile">
-    <li><a href="#"><i class="material-icons">view_list</i>  Classification</a></li>
+<ul id="slide-out" class="side-nav fixed leftside-navigation">
+                    <li class="user-details cyan darken-2">
+                        <div class="row">
+                            <div class="col col s4 m4 l4">
+                                <img src="http://www.deshraj.in/static/img/responsive_web_design.png" alt="" class="circle responsive-img valign profile-image" style="height:55px; width:55px;" >
+                            </div>
+                            <div class="col col s8 m8 l8">
+                                <ul id="profile-dropdown" class="dropdown-content">
+                                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-action-face-unlock"></i> Profile</a>
+                                    </li>
+                                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-action-settings"></i> Settings</a>
+                                    </li>
+                                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-communication-live-help"></i> Help</a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    </li>
+                                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-hardware-keyboard-tab"></i> Logout</a>
+                                    </li>
+                                </ul>
+                                <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn" href="#" class="waves-effect waves-block waves-light" data-activates="profile-dropdown">Deshraj<i class="mdi-navigation-arrow-drop-down right"></i></a>
+                                <p class="user-roal">Student Developer</p>
+                            </div>
+                        </div>
+                    </li>
+    <li><a href="/"><i class="material-icons">dashboard</i> My Workspaces</a></li>
     <div class="divider"></div>
-    <li><a href="#"><i class="material-icons">dialpad</i> Train a Model</a></li>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">assignment_ind</i>  Classification</a></li>
     <div class="divider"></div>
-    <li><a href="#"><i class="material-icons">textsms</i> Decaf Server</a></li>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">picture_in_picture</i>  Image Stitch</a></li>
     <div class="divider"></div>
-    <li><a class="modal-trigger" href="#s3modal"><i class="material-icons">vpn_key</i> Add S3 Bucket</a></li>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">view_list</i>  Object Detection</a></li>
     <div class="divider"></div>
-    <li><a href="/api/upload"><i class="material-icons">grade</i> Upload API</a></li>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">high_quality</i> Train a Model</a></li>
     <div class="divider"></div>
-    <li><a href="/api/download"><i class="material-icons">replay</i>Download API</a></li>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">textsms</i> Decaf Server</a></li>
     <div class="divider"></div>
-    <li><a href="#"><i class="material-icons">search</i> Feature 3</a></li>
+    <li><a class="modal-trigger" href="#s3modal"><i class="material-icons">vpn_key</i> VIP</a></li>
     <div class="divider"></div>
-
-    <li><a href="#"></a></li>
+    <li><a href="#"><i class="material-icons">replay</i>Matlab API</a></li>
+    <div class="divider"></div>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">search</i>Python API</a></li>
+    <div class="divider"></div>
   </ul>
   </header>
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -87,6 +144,7 @@
     <main>  
       {% block content %}
       {% endblock %}
+
     </main>
 <script src="/static/materialize/js/init.js"></script>
  {% block body %}
