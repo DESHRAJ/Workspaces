@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
+  <!--Let browser know website is optimized for mobile-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<style type="text/css">
+  html * {
+    /*color: black !important;*/
+    /*font-weight: 300;*/
+  }
+  .side-nav{
+    margin-top: 64px;
+  }
+  .responsive-img{
+    vertical-align: middle !important;
+  }
+  i{
+    vertical-align: middle;
+  }
+  @media screen and (min-width: 800px) {
+    .dashboardControls{
+        margin-left: 238px;
+        margin-bottom: 0;
+    }
+    .card{
+      height: 40%;
+    }
+    .row{
+      display: flex;
+    }
+  }
+  /*ul.side-nav.fixed a{
+    padding: 0 15px;
+  }*/
+  nav ul a{
+    display: inline-block;
+  }
+  ul.side-nav.leftside-navigation .profile-btn {
+    margin: 0;
+    text-transform: capitalize;
+    padding: 0;
+    text-shadow: 1px 1px 1px #444;
+    font-size: 15px;
+}
+#profile-dropdown{
+    width: 128px;
+    position: absolute;
+    top: 57px;
+    left: 101.234px;
+    opacity: 1;
+    /*display: block;*/
+}
+ul.side-nav.leftside-navigation li a {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.side-nav a {
+    line-height: 42px;
+    height: 42px;
+}
+ul.side-nav li {
+    padding: 0;
+}
+
+ul.side-nav.leftside-navigation li.user-details {
+  background: url(http://demo.geekslabs.com/materialize/v2.1/layout01/images/user-bg.jpg) no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  /*overflow: hidden;*/
+  margin-bottom: 15px;
+  padding: 15px 0px 0px 15px;
+}
+
+ul#task-card li{
+  padding-left: 20px;
+}
+
+#flight-card .card-header .card-title {
+    padding: 20px;
+}
+
+.card .card-title {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 300;
+}
+#flight-card .flight-card-date {
+    font-size: 1.0rem;
+    margin: 0;
+}
+#profile-card .card-profile-image {
+    width: 70px;
+    position: absolute;
+    top: 110px;
+    z-index: 1;
+    cursor: pointer;
+    height: 70px;
+}
+#profile-card .card-image {
+    height: 150px;
+}
+</style>
+<body>
+  <header>
+  <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper z-index-2  light-blue accent-2 white-text">
+        <a href="#!" class="waves-effect waves-block waves-light brand-logo white-text">CloudCV Dashboard</a>
+        <a href="#" data-activates="mobile-demo" class="waves-effect waves-block waves-light button-collapse"><i class="material-icons">view_list</i></a>
+        <ul class="right hide-on-med-and-down white-text">
+          <li><a href="#" class="white-text waves-effect waves-block waves-light">History</a></li>
+          <li><a href="#" class="white-text waves-effect waves-block waves-light">My Workspaces</a></li>
+          <li><a href="#" class="white-text waves-effect waves-block waves-light">Goto DIGITS</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+<ul id="slide-out" class="side-nav fixed leftside-navigation">
+    <li class="user-details cyan darken-2">
+        <div class="row">
+            <div class="col col s4 m4 l4">
+                <img src="http://www.deshraj.in/static/img/responsive_web_design.png" alt="" class="circle responsive-img valign profile-image" style="height:55px; width:55px;" >
+            </div>
+            <div class="col col s8 m8 l8">
+                <ul id="profile-dropdown" class="dropdown-content">
+                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-action-face-unlock"></i> Profile</a>
+                    </li>
+                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-action-settings"></i> Settings</a>
+                    </li>
+                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-communication-live-help"></i> Help</a>
+                    </li>
+                    <li class="divider"></li>
+                    </li>
+                    <li><a href="#" class="waves-effect waves-block waves-light"><i class="mdi-hardware-keyboard-tab"></i> Logout</a>
+                    </li>
+                </ul>
+                <a class="btn-flat dropdown-button waves-effect waves-light white-text profile-btn" href="#" class="waves-effect waves-block waves-light" data-activates="profile-dropdown">Deshraj<i class="mdi-navigation-arrow-drop-down right"></i></a>
+                <p class="user-roal">Student Developer</p>
+            </div>
+        </div>
+    </li>
+    <li><a href="/"><i class="material-icons">dashboard</i> My Workspaces</a></li>
+    <div class="divider"></div>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">assignment_ind</i>  Classification</a></li>
+    <div class="divider"></div>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">picture_in_picture</i>  Image Stitch</a></li>
+    <div class="divider"></div>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">view_list</i>  Object Detection</a></li>
+    <div class="divider"></div>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">high_quality</i> Train a Model</a></li>
+    <div class="divider"></div>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">textsms</i> Decaf Server</a></li>
+    <div class="divider"></div>
+    <li><a class="modal-trigger" href="#s3modal"><i class="material-icons">vpn_key</i> VIP</a></li>
+    <div class="divider"></div>
+    <li><a href="#"><i class="material-icons">replay</i>Matlab API</a></li>
+    <div class="divider"></div>
+    <li><a href="#" class="waves-effect waves-block waves-light"><i class="material-icons">search</i>Python API</a></li>
+    <div class="divider"></div>
+  </ul>
+  </header>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script>
+</header>
+    <main>  
+      {% block content %}
+      {% endblock %}
+      <div id="card-widgets">
+        <div class="row dashboardControls">
+            <div class="col s12 m12 l4">
+                <ul id="task-card" class="collection with-header">
+                    <li class="collection-header cyan">
+                        <h4 class="task-card-title white-text">My Jobs</h4>
+                        <p class="task-card-date white-text">September 16, 2015</p>
+                    </li>
+                    <li>
+                      <p>MNIST Dataset Job</p>
+                    </li>
+                      <div class="divider"></div>
+                    <li>
+                      <p>Dummy Model Job</p>
+                    </li>
+                      <div class="divider"></div>                                    
+                    <li>
+                      <p>Dummy Model Job 2 on LeNet</p>
+                    </li>
+                      <div class="divider"></div>
+                    <li>
+                      <p>Dummy Model Job 3 on LeNet</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col s12 m6 l4">
+                <div id="flight-card" class="card">
+                    <div class="card-header amber darken-2">
+                        <div class="card-title">
+                            <h4 class="flight-card-title">Some Chart Stats</h4>
+                            <p class="flight-card-date">September, Thu 04:50</p>
+                        </div>
+                    </div>
+                    <div class="card-content-bg black-text center">
+                      <div id="main" style="width:1000px; height:200px; margin: 10px 20%; ">
+                          <div id="div1"></div>
+                      </div>
+                    </div>
+                    </div>
+            </div>
+
+            <div class="col s12 m6 l4">
+                <div id="profile-card" class="card">
+                    <div class="card-image waves-effect waves-block waves-light">
+                        <img class="activator" src="http://demo.geekslabs.com/materialize/v2.1/layout01/images/user-bg.jpg" alt="user background">
+                    </div>
+                    <div class="card-content">
+                        <img src="http://www.deshraj.in/static/img/responsive_web_design.png" alt="" class="circle responsive-img activator card-profile-image">
+                        <a class="btn-floating activator btn-move-up waves-effect waves-light darken-2 right">
+                            <i class="mdi-action-account-circle"></i>
+                        </a>
+
+                        <span class="card-title activator grey-text text-darken-4">Deshraj Yadav</span>
+                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Student Developer</p>
+                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +91 955 344 56</p>
+                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> deshrajdry@gmail.com</p>
+                    </div>
+                    <div class="card-reveal">
+                        <span class="card-title grey-text text-darken-4">Deshraj Yadav<i class="mdi-navigation-close right"></i></span>
+                        <p>Hey, I love to code and build some realtime projects.</p>
+                        <p><i class="mdi-action-perm-identity cyan-text text-darken-2"></i> Student Developer</p>
+                        <p><i class="mdi-action-perm-phone-msg cyan-text text-darken-2"></i> +91 955 344 456</p>
+                        <p><i class="mdi-communication-email cyan-text text-darken-2"></i> deshrajdry@gmail.com</p>
+                        <p><i class="mdi-social-cake cyan-text text-darken-2"></i> 12th August 1994</p>
+                        <p><i class="mdi-device-airplanemode-on cyan-text text-darken-2"></i> NDLS - USA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+       <div id="card-stats">
+          <div class="row dashboardControls">
+              <div class="col s12 m6 l3">
+                  <div class="card">
+                      <div class="card-content  green white-text">
+                          <p class="card-stats-title"><i class="mdi-social-group-add"></i> RAM Usage</p>
+                          <h4 class="card-stats-number">50%</h4>
+                          <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i>15% <span class="green-text text-lighten-5">Performance </span>
+                          </p>
+                      </div>
+                      <div class="card-action  green darken-2">
+                          <div id="clients-bar"><canvas width="290" height="25" style="display: inline-block; width: 290px; height: 25px; vertical-align: top;"></canvas></div>
+                      </div>
+                  </div>
+              </div>
+              <div class="col s12 m6 l3">
+                  <div class="card">
+                      <div class="card-content purple white-text">
+                          <p class="card-stats-title"><i class="mdi-editor-attach-money"></i>CPU Usage</p>
+                          <h4 class="card-stats-number">14.3%</h4>
+                          <p class="card-stats-compare"><i class="mdi-hardware-keyboard-arrow-up"></i> 2 <span class="purple-text text-lighten-5">Cores Available</span>
+                          </p>
+                      </div>
+                      <div class="card-action purple darken-2">
+                          <div id="sales-compositebar"><canvas width="286" height="25" style="display: inline-block; width: 286px; height: 25px; vertical-align: top;"></canvas></div>
+                      </div>
+                  </div>
+              </div>                            
+              <div class="col s12 m6 l3">
+                  <div class="card">
+                      <div class="card-content pink lighten-2 white-text">
+                          <p class="card-stats-title"><i class="mdi-editor-insert-drive-file"></i> No. of Jobs Running on Server</p>
+                          <h4 class="card-stats-number">32</h4>
+                      </div>
+                      <div class="card-action  pink darken-2">
+                          <div id="invoice-line"><canvas width="261" height="25" style="display: inline-block; width: 261px; height: 25px; vertical-align: top;"></canvas></div>
+                      </div>
+                  </div>
+              </div>
+              <div class="col s12 m6 l3">
+                  <div class="card">
+                      <div class="card-content blue-grey white-text">
+                          <p class="card-stats-title"><i class="mdi-action-trending-up"></i> Total Jobs Submitted Today</p>
+                          <h4 class="card-stats-number">526</h4>
+                      </div>
+                      <div class="card-action blue-grey darken-2">
+                          <div id="profit-tristate"><canvas width="290" height="25" style="display: inline-block; width: 290px; height: 25px; vertical-align: top;"></canvas></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </main>
+<script src="/static/materialize/js/init.js"></script>
+ {% block body %}
+    {% endblock %}
+    {% block extra_body %}
+    {% endblock %}
+
+
+     <script type="text/javascript" src="/static/d3/scripts/d3.min.js"></script>
+    <script type="text/javascript" src="/static/d3/scripts/radialProgress.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="/static/d3/styles/style.css">
+
+    <style>
+
+        #test .arc2 {
+            stroke-weight:0.1;
+            fill: #3660b0;
+        }
+
+        #outer {
+            background:#FFFFFF;
+            border-radius: 5px;
+            color: #000;
+        }
+
+        #div1, #div2, #div3, #div4 {
+            width: 33%;
+            height: 200px;
+            box-sizing: border-box;
+            float: left;
+        }
+
+        #div2 .arc {
+            stroke-weight: 0.1;
+            fill: #f0a417;
+        }
+
+        #div2 .arc2 {
+            stroke-weight: 0.1;
+            fill: #b00d08;
+        }
+
+        #div3 .arc {
+            stroke-weight: 0.1;
+            fill: #1d871b;
+        }
+
+
+        .selectedRadial {
+            border-radius: 3px;
+            background: #f4f4f4;
+            color: #000;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+            -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+            border: 1px solid rgba(200,200,200,0.85);
+        }
+
+        .radial {
+            border-radius: 3px;
+            background: #FFFFFF;
+            color: #000;
+
+        }
+
+
+    </style>
+</head>
+<script language="JavaScript">
+
+    var div1=d3.select(document.getElementById('div1'));
+    var div2=d3.select(document.getElementById('div2'));
+    var div3=d3.select(document.getElementById('div3'));
+    var div4=d3.select(document.getElementById('div4'));
+
+    start();
+
+    function onClick1() {
+        deselect();
+        div1.attr("class","selectedRadial");
+    }
+
+    function onClick2() {
+        deselect();
+        div2.attr("class","selectedRadial");
+    }
+
+    function onClick3() {
+        deselect();
+        div3.attr("class","selectedRadial");
+    }
+
+    function labelFunction(val,min,max) {
+
+    }
+
+    function deselect() {
+        div1.attr("class","radial");
+        div2.attr("class","radial");
+        div3.attr("class","radial");
+    }
+
+    function start() {
+
+        var rp1 = radialProgress(document.getElementById('div1'))
+                .label("Performance")
+                .onClick(onClick1)
+                .diameter(150)
+                .value(78)
+                .render();
+
+        var rp2 = radialProgress(document.getElementById('div2'))
+                .label("RADIAL 2")
+                .onClick(onClick2)
+                .diameter(150)
+                .value(132)
+                .render();
+
+        var rp3 = radialProgress(document.getElementById('div3'))
+                .label("RADIAL 3")
+                .onClick(onClick3)
+                .diameter(150)
+                .minValue(100)
+                .maxValue(200)
+                .value(150)
+                .render();
+
+    }
+</script>
+</body>
+  <script type="text/javascript">
+   $(document).ready(function(){
+  $('.collapsible').collapsible({
+    accordion : true 
+  });
+  });
+  </script>
+</html>

@@ -57,9 +57,12 @@ INSTALLED_APPS = (
 	'allauth.socialaccount.providers.dropbox',
 	'allauth.socialaccount.providers.google',
 	'redis_sessions_fork',
+	'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
+	'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
@@ -160,3 +163,14 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'desh.py@gmail.com'
 EMAIL_HOST_PASSWORD = 'password'
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
+
+DROPBOX_APP_KEY = "ufn26fw3gxk5u42"
+
+DROPBOX_APP_SECRET = "yefo149lznzk6q1"
+
+ 
