@@ -23,16 +23,16 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, load_backend
 from django.shortcuts import render, HttpResponse
-from django.views.decorators.csrf import csrf_exempt  
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import *
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from allauth.socialaccount.models import * 
+from allauth.socialaccount.models import *
 from Workspaces import *
 from digitsdb.models import *
 from dropbox.client import DropboxClient
 from dropbox.session import DropboxSession
-from boto.s3.connection import * 
+from boto.s3.connection import *
 from apiclient import errors
 from apiclient.http import MediaFileUpload
 from Workspaces.settings import *
@@ -45,6 +45,10 @@ import glob
 import os
 import dropbox
 import shutil
+from django.shortcuts import *
+
+def test_new(request):
+	return render_to_response("new_base.html")
 
 def get_user_from_session(session_key):
 	'''
@@ -65,12 +69,12 @@ def get_user_from_session(session_key):
 
 class UploadAPI(APIView):
 	'''
-		Uplaod API for uploading featured and classification models to 
-		AWS S3 and Dropbox. 
-		Convention for uploading files: 
+		Uplaod API for uploading featured and classification models to
+		AWS S3 and Dropbox.
+		Convention for uploading files:
 			Example 1: s3://bucket:/path/to/files
 			Example 2: dropbox://path/to/files
-			Example 3: gdrive://path/to/file 
+			Example 3: gdrive://path/to/file
 	'''
 	def post(self,request):
 		source_path = request.POST['source_path']
@@ -170,8 +174,8 @@ def post_data_on_dropbox(request, source_path, dest_path,access_token, user_id):
 
 class DownloadAPI(APIView):
 	'''
-		Download API for downloading Training Images, Validation Images 
-		and Caffe models from S3 and Dropbox.  
+		Download API for downloading Training Images, Validation Images
+		and Caffe models from S3 and Dropbox.
 	'''
 	def post(self,request):
 		try:
@@ -198,7 +202,6 @@ class DownloadAPI(APIView):
 				dest_path+="/"
 			if not os.path.isdir(dest_path):
 				os.makedirs(dest_path)
-
 			if path.split(":")[0].lower()=="s3":
 				print "[DOWNLOAD API FOR S3]"
 				bucket = path.split(":")[1][2:]
@@ -214,6 +217,7 @@ class DownloadAPI(APIView):
 				session.set_token(access_key, access_secret)
 				client = DropboxClient(session)
 				token = client.create_oauth2_access_token()
+				print "########### ok ###########"
 				result = get_data_from_dropbox(request, source_path, dest_path, token, user_id)
 			elif path.split(":")[0].lower() =="gdrive":
 				# NON FUNCTIONAL
