@@ -228,6 +228,7 @@ class DownloadAPI(APIView):
 		except:
 			shutil.rmtree(dest_path[:-1])
 			result = {"error":"Invalid Input Provided"}
+		print result
 		return HttpResponse(json.dumps(result))
 
 
@@ -276,7 +277,7 @@ def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id)
 		result['dest_path'] = dest_path
 		if source_path[-9:] == '.prototxt' or source_path[-11:] == '.caffemodel':
 			f, metadata = client.get_file_and_metadata(images_metadata['path'])
-			out = open(dest_path + str(images_metadata['path'].split("/")[-1]), 'wb')
+			out = open(dest_path + "/" + str(images_metadata['path'].split("/")[-1]), 'wb')
 			out.write(f.read())
 			out.close()
 			result['dest_path'] = dest_path + str(images_metadata['path'].split("/")[-1])
@@ -284,7 +285,7 @@ def get_data_from_dropbox(request,source_path, dest_path, access_token, user_id)
 			for i in images_metadata['contents']:
 				if not i['is_dir']:
 					f, metadata = client.get_file_and_metadata(i['path'])
-					out = open(dest_path + str(i['path'].split("/")[-1]), 'wb')
+					out = open(dest_path + '/' + str(i['path'].split("/")[-1]), 'wb')
 					out.write(f.read())
 					out.close()
 	except:
