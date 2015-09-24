@@ -49,7 +49,7 @@ INSTALLED_APPS = (
 	'django.contrib.messages',
 	'django.contrib.staticfiles', 
 	'organizations',
-	'digits',
+	# 'digits',
 	'digitsdb',
 	'allauth',
 	'allauth.account',

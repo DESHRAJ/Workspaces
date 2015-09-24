@@ -47,8 +47,51 @@ import dropbox
 import shutil
 from django.shortcuts import *
 
+############## import for socket functionality #############
+
+import os
+import time
+import subprocess
+from threading import Thread
+# from flask import Flask, render_template, session, request
+# from flask.ext.socketio import SocketIO, emit, join_room, leave_room, \
+    # close_room, disconnect
+import sys
+sys.path.append('/home/py-dev/Documents/DIGITS')
+
+def get_download_status(socketio):
+	"""
+		Method for calculating the percentage of completion
+		and then sending a response to page using socketIO.
+		This process is repeating untill the copy is not 
+		done completely.
+	"""
+	# dest_size = subprocess.call("du -hs destination/")
+	# source_size = subprocess.call("du -hs source/")
+	# from digits.webapp import socketio
+	dest_size = 0
+	source_size = 100
+	while(dest_size <= source_size):
+		time.sleep(1)
+		percent = (dest_size/float(source_size))*100
+		dest_size += 5
+		print "###############   %s" %(percent)
+		# socketio.emit("progressbar",
+		# 	{'percentage':percent})
+
 def test_new(request):
 	return render_to_response("new_base.html")
+
+
+def background_thread():
+	"""Example of how to send server generated events to clients."""
+	count = 0
+	while True:
+		time.sleep(10)
+		count += 1
+		socketio.emit('my response',
+					  {'data': 'Server generated event', 'count': count},
+					  namespace='/test')
 
 def get_user_from_session(session_key):
 	'''
