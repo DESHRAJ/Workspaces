@@ -6,3 +6,8 @@ django-allauth==0.22.0
 dropbox
 boto
 google-api-python-client
+django-cors-headers
+six --upgrade
+djangorestframework
+django-filter
+urllib3 --upgrade
